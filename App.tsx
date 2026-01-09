@@ -15,7 +15,8 @@ import {
   ChevronRight,
   Sparkles,
   Zap,
-  Type
+  Type,
+  PenTool
 } from 'lucide-react';
 
 const App: React.FC = () => {
@@ -24,6 +25,7 @@ const App: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedExpression, setSelectedExpression] = useState<StickerExpression>(StickerExpression.HAPPY);
+  const [customExpressionText, setCustomExpressionText] = useState('');
   const [customPrompt, setCustomPrompt] = useState('');
   const [editingSticker, setEditingSticker] = useState<Sticker | null>(null);
   
@@ -47,11 +49,20 @@ const App: React.FC = () => {
       return;
     }
 
+    if (selectedExpression === StickerExpression.CUSTOM && !customExpressionText.trim()) {
+      setError("請輸入自訂表情的描述。");
+      return;
+    }
+
     setIsGenerating(true);
     setError(null);
 
     try {
-      const stickerUrl = await generateSticker(baseImage, selectedExpression, customPrompt);
+      const expressionToUse = selectedExpression === StickerExpression.CUSTOM 
+        ? customExpressionText 
+        : selectedExpression;
+
+      const stickerUrl = await generateSticker(baseImage, expressionToUse, customPrompt);
       if (stickerUrl) {
         // 自動執行去背處理，將背景轉換為透明
         const transparentUrl = await removeBackgroundFromBase64(stickerUrl);
@@ -59,11 +70,14 @@ const App: React.FC = () => {
         const newSticker: Sticker = {
           id: Math.random().toString(36).substring(7),
           url: transparentUrl,
-          prompt: customPrompt || selectedExpression,
+          prompt: expressionToUse,
           timestamp: Date.now(),
         };
         setStickers(prev => [newSticker, ...prev]);
-        setCustomPrompt('');
+        // 清除自訂欄位，但保留 customPrompt 以便使用者連續產生相似風格
+        if (selectedExpression === StickerExpression.CUSTOM) {
+          setCustomExpressionText('');
+        }
       } else {
         throw new Error("AI 無法回傳圖片。");
       }
@@ -157,12 +171,28 @@ const App: React.FC = () => {
                 ))}
               </div>
 
+              {selectedExpression === StickerExpression.CUSTOM && (
+                <div className="mt-4 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <label className="block text-xs font-bold text-[#F85E00] uppercase tracking-wider mb-2 flex items-center gap-2">
+                    <PenTool className="w-3 h-3" />
+                    請描述表情或動作
+                  </label>
+                  <input
+                    type="text"
+                    value={customExpressionText}
+                    onChange={(e) => setCustomExpressionText(e.target.value)}
+                    placeholder="例如：手拿珍珠奶茶、正在跳舞..."
+                    className="w-full px-4 py-3 bg-white border-2 border-[#F85E00]/20 rounded-2xl text-sm font-bold text-[#3D3721] focus:border-[#F85E00] outline-none transition-all placeholder:text-[#3D3721]/30"
+                  />
+                </div>
+              )}
+
               <div className="mt-6">
-                <label className="block text-xs font-bold text-[#3D3721] uppercase tracking-wider mb-2 italic opacity-60">自訂額外要求 (選填)</label>
+                <label className="block text-xs font-bold text-[#3D3721] uppercase tracking-wider mb-2 italic opacity-60">風格微調要求 (選填)</label>
                 <textarea
                   value={customPrompt}
                   onChange={(e) => setCustomPrompt(e.target.value)}
-                  placeholder="例如：穿著一件紅色連帽衫..."
+                  placeholder="例如：背景加上小星星、更簡約的線條..."
                   className="w-full px-4 py-3 bg-white border border-[#3D3721]/10 rounded-2xl text-sm font-medium text-[#3D3721] focus:ring-4 focus:ring-[#F85E00]/10 focus:border-[#F85E00] outline-none transition-all placeholder:text-[#3D3721]/30"
                   rows={2}
                 />

@@ -17,5 +17,6 @@ export enum StickerExpression {
   HEART = "心動求饒 (Love)",
   GOOD_NIGHT = "疲累想睡 (Sleepy)",
   SHOCKED = "驚訝震驚 (Shocked)",
-  LOL = "開懷大笑 (LOL)"
+  LOL = "開懷大笑 (LOL)",
+  CUSTOM = "✨ 自訂表情"
 }
