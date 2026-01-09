@@ -1,0 +1,7 @@
+{
+  "name": "StickerGen Studio",
+  "description": "Create a personalized sticker pack from a single character image. Use AI to generate consistent expressions and actions for your character stickers.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

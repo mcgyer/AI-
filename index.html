@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StickerGen Studio | AI 貼圖創作家</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* 底色調淡，文字加深，保留活力色號 */
+      --ui-bg: #FFF5E6;     /* 調淡後的底色 (基於 FFB563) */
+      --ui-frame: #FFFBF5;  /* 調淡後的圖框 (基於 FFD29D) */
+      --ui-text: #3D3721;   /* 加深後的文字 (基於 918450) */
+      --ui-action: #F85E00; /* 選項與主要按鈕色 */
+    }
+    
+    body { 
+      font-family: 'Noto Sans TC', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+      background-color: var(--ui-bg);
+      color: var(--ui-text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .title-font { 
+      font-weight: 900; 
+      letter-spacing: -0.01em;
+      color: var(--ui-text);
+    }
+
+    .sticker-border {
+      filter: drop-shadow(0 0 5px rgba(255, 255, 255, 1)) drop-shadow(0 0 1px rgba(0,0,0,0.2));
+    }
+
+    /* Scrollbar override */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--ui-bg); }
+    ::-webkit-scrollbar-thumb { background: #D6CDB3; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--ui-text); }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.35.0"
+  }
+}
+</script>
+</head>
+<body class="text-slate-900">
+  <div id="root"></div>
+</body>
+</html>
