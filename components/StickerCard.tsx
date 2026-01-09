@@ -21,13 +21,22 @@ export const StickerCard: React.FC<StickerCardProps> = ({ sticker, onDelete, onE
 
   return (
     <div className="group relative bg-[#FFFBF5] rounded-[2rem] border border-[#3D3721]/5 overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
-      <div className="aspect-square bg-[radial-gradient(#F85E00_0.5px,transparent_0.5px)] [background-size:20px_20px] bg-white flex items-center justify-center p-6 relative">
+      <div 
+        className="aspect-square flex items-center justify-center p-6 relative"
+        style={{
+          // 加入棋盤格底紋提示透明
+          backgroundImage: 'linear-gradient(45deg, #f8f8f8 25%, transparent 25%), linear-gradient(-45deg, #f8f8f8 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f8f8f8 75%), linear-gradient(-45deg, transparent 75%, #f8f8f8 75%)',
+          backgroundSize: '16px 16px',
+          backgroundPosition: '0 0, 0 8px, 8px -8px, -8px 0px',
+          backgroundColor: '#fff'
+        }}
+      >
         <img 
           src={sticker.url} 
           alt={sticker.prompt}
           className="w-full h-full object-contain sticker-border z-10"
         />
-        <div className="absolute inset-0 bg-gradient-to-tr from-[#FFFBF5]/40 to-transparent opacity-50"></div>
+        <div className="absolute inset-0 bg-gradient-to-tr from-[#FFFBF5]/20 to-transparent opacity-30"></div>
       </div>
       
       <div className="p-4 bg-white/60 border-t border-[#3D3721]/5">
@@ -45,7 +54,7 @@ export const StickerCard: React.FC<StickerCardProps> = ({ sticker, onDelete, onE
           <button 
             onClick={handleDownload}
             className="flex-1 flex justify-center py-2.5 rounded-xl bg-white text-[#3D3721] hover:bg-[#F85E00] hover:text-white transition-all duration-300 shadow-sm border border-[#3D3721]/5"
-            title="下載"
+            title="下載透明 PNG"
           >
             <Download className="w-4 h-4" />
           </button>

@@ -4,6 +4,7 @@ import { Header } from './components/Header';
 import { StickerCard } from './components/StickerCard';
 import { StickerEditor } from './components/StickerEditor';
 import { generateSticker } from './services/geminiService';
+import { removeBackgroundFromBase64 } from './utils/imageUtils';
 import { Sticker, StickerExpression } from './types';
 import { 
   Upload, 
@@ -52,9 +53,12 @@ const App: React.FC = () => {
     try {
       const stickerUrl = await generateSticker(baseImage, selectedExpression, customPrompt);
       if (stickerUrl) {
+        // 自動執行去背處理，將背景轉換為透明
+        const transparentUrl = await removeBackgroundFromBase64(stickerUrl);
+        
         const newSticker: Sticker = {
           id: Math.random().toString(36).substring(7),
-          url: stickerUrl,
+          url: transparentUrl,
           prompt: customPrompt || selectedExpression,
           timestamp: Date.now(),
         };
@@ -188,12 +192,12 @@ const App: React.FC = () => {
                 ) : (
                   <>
                     <Zap className="w-5 h-5 fill-current" />
-                    生成貼圖
+                    生成透明貼圖
                   </>
                 )}
               </button>
               <p className="text-[10px] text-center mt-3 text-[#3D3721]/50 font-bold">
-                * 貼圖將不帶文字，可於生成後手動加入
+                * 貼圖將自動去除背景，生成透明 PNG 格式
               </p>
             </section>
           </div>
@@ -210,7 +214,7 @@ const App: React.FC = () => {
               {stickers.length > 0 && (
                 <div className="flex items-center gap-2 text-sm text-[#3D3721]/70 font-bold hidden sm:flex italic">
                   <Type className="w-4 h-4 text-[#F85E00]" />
-                  點擊編輯，自行加入台灣味流行語！
+                  貼圖已去背，可下載為透明 PNG！
                 </div>
               )}
             </div>
@@ -225,7 +229,7 @@ const App: React.FC = () => {
                 </div>
                 <h3 className="text-2xl font-black text-[#3D3721] mb-2">啟動你的貼圖創意</h3>
                 <p className="text-[#3D3721]/60 font-medium max-w-xs mx-auto">
-                  上傳角色，AI 將生成去背圖。隨後點擊編輯按鈕，即可自由添加任何流行對白！
+                  上傳角色，AI 將自動生成透明去背 PNG。點擊編輯即可自由添加對白與細節！
                 </p>
               </div>
             ) : (

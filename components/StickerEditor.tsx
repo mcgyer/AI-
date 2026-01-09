@@ -59,6 +59,7 @@ export const StickerEditor: React.FC<StickerEditorProps> = ({ sticker, onSave, o
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // 清除畫布，保留透明
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.filter = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`;
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -68,7 +69,7 @@ export const StickerEditor: React.FC<StickerEditorProps> = ({ sticker, onSave, o
   const saveToHistory = () => {
     const canvas = canvasRef.current;
     if (canvas) {
-      setHistory(prev => [...prev, canvas.toDataURL()]);
+      setHistory(prev => [...prev, canvas.toDataURL('image/png')]);
     }
   };
 
@@ -195,7 +196,8 @@ export const StickerEditor: React.FC<StickerEditorProps> = ({ sticker, onSave, o
   const handleSave = () => {
     const canvas = canvasRef.current;
     if (canvas) {
-      onSave(sticker.id, canvas.toDataURL());
+      // 確保儲存為透明 PNG
+      onSave(sticker.id, canvas.toDataURL('image/png'));
     }
   };
 
@@ -248,7 +250,14 @@ export const StickerEditor: React.FC<StickerEditorProps> = ({ sticker, onSave, o
           <div 
             ref={containerRef}
             className="relative shadow-2xl rounded-3xl overflow-hidden bg-white border-8 border-white select-none"
-            style={{ width: 'min(550px, 75vw)', height: 'min(550px, 75vw)' }}
+            style={{ 
+              width: 'min(550px, 75vw)', 
+              height: 'min(550px, 75vw)',
+              // 加入棋盤格底紋提示透明
+              backgroundImage: 'linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)',
+              backgroundSize: '20px 20px',
+              backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px'
+            }}
           >
             <canvas 
               ref={canvasRef}
@@ -259,7 +268,7 @@ export const StickerEditor: React.FC<StickerEditorProps> = ({ sticker, onSave, o
               onTouchStart={handleCanvasInteraction}
               onTouchMove={(e) => tool === 'draw' ? draw(e) : updateTextPositionFromEvent(e)}
               onTouchEnd={stopDrawing}
-              className={`w-full h-full object-contain ${tool === 'draw' ? 'cursor-crosshair' : tool === 'text' ? 'cursor-move' : 'cursor-default'}`}
+              className={`w-full h-full object-contain relative z-10 ${tool === 'draw' ? 'cursor-crosshair' : tool === 'text' ? 'cursor-move' : 'cursor-default'}`}
             />
             
             {/* 文字預覽 */}
